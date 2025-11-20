@@ -1,6 +1,7 @@
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
+import QuoteRequestDialog from "@/components/QuoteRequestDialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
@@ -12,6 +13,13 @@ import packagingSupplies from "@/assets/packaging-supplies.jpg";
 
 const Products = () => {
   const [activeFilter, setActiveFilter] = useState("All");
+  const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<{ title: string; category: string } | null>(null);
+
+  const handleQuoteClick = (title: string, category: string) => {
+    setSelectedProduct({ title, category });
+    setQuoteDialogOpen(true);
+  };
 
   const filters = ["All", "Film", "Boxes", "Tape", "Protection", "Janitorial"];
 
@@ -143,7 +151,11 @@ const Products = () => {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
             {filteredProducts.map((product, index) => (
-              <ProductCard key={`${product.title}-${index}`} {...product} />
+              <ProductCard 
+                key={`${product.title}-${index}`} 
+                {...product}
+                onQuoteClick={() => handleQuoteClick(product.title, product.category)}
+              />
             ))}
           </div>
 
@@ -167,6 +179,13 @@ const Products = () => {
       </section>
 
       <Footer />
+      
+      <QuoteRequestDialog 
+        open={quoteDialogOpen}
+        onOpenChange={setQuoteDialogOpen}
+        productTitle={selectedProduct?.title}
+        productCategory={selectedProduct?.category}
+      />
     </div>
   );
 };

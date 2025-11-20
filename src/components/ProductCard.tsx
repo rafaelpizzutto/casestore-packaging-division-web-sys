@@ -8,9 +8,10 @@ interface ProductCardProps {
   image: string;
   category?: string;
   isNew?: boolean;
+  onQuoteClick?: () => void;
 }
 
-const ProductCard = ({ title, description, image, category, isNew }: ProductCardProps) => {
+const ProductCard = ({ title, description, image, category, isNew, onQuoteClick }: ProductCardProps) => {
   return (
     <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 animate-in fade-in">
       <div className="relative overflow-hidden aspect-square">
@@ -37,7 +38,11 @@ const ProductCard = ({ title, description, image, category, isNew }: ProductCard
         <CardDescription className="line-clamp-2">{description}</CardDescription>
       </CardHeader>
       <CardFooter>
-        <Button variant="outline" className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors">
+        <Button 
+          variant="outline" 
+          className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+          onClick={onQuoteClick}
+        >
           Add to Quote
         </Button>
       </CardFooter>
