@@ -2,11 +2,19 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { useMenuItems, useSiteSettings } from "@/hooks/useCMS";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: menuItems } = useMenuItems();
+  const { data: settings } = useSiteSettings();
 
-  const navLinks = [
+  const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
+
+  const navLinks = menuItems?.map(item => ({
+    name: item.name,
+    path: item.path,
+  })) || [
     { name: "Home", path: "/" },
     { name: "Products", path: "/products" },
     { name: "Warehouse Tracker AI", path: "/warehouse-tracker" },
@@ -20,7 +28,7 @@ const Navigation = () => {
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
             <div className="text-2xl font-bold text-foreground">
-              CaseStore<span className="text-primary">.</span>
+              {siteName}<span className="text-primary">.</span>
             </div>
           </Link>
 
