@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useSiteSettings, useUpdateSiteSetting } from '@/hooks/useCMS';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2, Save, Upload } from 'lucide-react';
@@ -169,6 +170,73 @@ const AdminSettings = () => {
                   className="flex-1 flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 [&>input]:border-0 [&>input]:bg-transparent [&>input]:outline-none [&>input]:flex-1"
                 />
                 <Button onClick={() => handleSave('contact_phone')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_location">Location</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="contact_location"
+                  value={formData.contact_location || ''}
+                  onChange={(e) => setFormData({ ...formData, contact_location: e.target.value })}
+                  placeholder="United States"
+                />
+                <Button onClick={() => handleSave('contact_location')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Footer Content</CardTitle>
+            <CardDescription>Customize your footer text and products</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="footer_description">Description (below logo)</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="footer_description"
+                  value={formData.footer_description || ''}
+                  onChange={(e) => setFormData({ ...formData, footer_description: e.target.value })}
+                  placeholder="Your company description..."
+                  rows={3}
+                />
+                <Button onClick={() => handleSave('footer_description')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="footer_products">Products List (comma-separated)</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="footer_products"
+                  value={formData.footer_products || ''}
+                  onChange={(e) => setFormData({ ...formData, footer_products: e.target.value })}
+                  placeholder="Product 1,Product 2,Product 3"
+                  rows={2}
+                />
+                <Button onClick={() => handleSave('footer_products')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="footer_copyright">Copyright Text</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="footer_copyright"
+                  value={formData.footer_copyright || ''}
+                  onChange={(e) => setFormData({ ...formData, footer_copyright: e.target.value })}
+                  placeholder="Company LLC. All rights reserved."
+                />
+                <Button onClick={() => handleSave('footer_copyright')} size="icon">
                   <Save className="h-4 w-4" />
                 </Button>
               </div>
