@@ -1,11 +1,24 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { useSiteSettings } from "@/hooks/useCMS";
+import { useSiteSettings, useMenuItems } from "@/hooks/useCMS";
 
 const Footer = () => {
   const { data: settings } = useSiteSettings();
-  const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
-  const logoUrl = settings?.find(s => s.key === 'logo_url')?.value;
+  const { data: menuItems } = useMenuItems();
+  
+  const getSetting = (key: string, fallback: string) => 
+    settings?.find(s => s.key === key)?.value || fallback;
+
+  const siteName = getSetting('site_name', 'CaseStore');
+  const logoUrl = getSetting('logo_url', '');
+  const description = getSetting('footer_description', 'Your trusted partner for packaging supplies, logistics solutions, and warehouse management technology.');
+  const email = getSetting('contact_email', 'sales@casestore.us');
+  const phone = getSetting('contact_phone', '');
+  const location = getSetting('contact_location', 'United States');
+  const copyright = getSetting('footer_copyright', 'CaseStore LLC. All rights reserved.');
+  const productsString = getSetting('footer_products', 'Stretch Film,Corrugated Boxes,Packing Tape,Bubble Wrap,Janitorial Supplies');
+  
+  const products = productsString.split(',').map(p => p.trim()).filter(Boolean);
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
@@ -20,44 +33,29 @@ const Footer = () => {
               </h3>
             )}
             <p className="text-sm text-secondary-foreground/80">
-              Your trusted partner for packaging supplies, logistics solutions, and warehouse management technology.
+              {description}
             </p>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link to="/products" className="hover:text-primary transition-colors">
-                  Products
-                </Link>
-              </li>
-              <li>
-                <Link to="/warehouse-tracker" className="hover:text-primary transition-colors">
-                  Warehouse Tracker AI
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="hover:text-primary transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="hover:text-primary transition-colors">
-                  Contact
-                </Link>
-              </li>
+              {menuItems?.map((item) => (
+                <li key={item.id}>
+                  <Link to={item.path} className="hover:text-primary transition-colors">
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
             <h4 className="font-semibold mb-4">Products</h4>
             <ul className="space-y-2 text-sm">
-              <li className="text-secondary-foreground/80">Stretch Film</li>
-              <li className="text-secondary-foreground/80">Corrugated Boxes</li>
-              <li className="text-secondary-foreground/80">Packing Tape</li>
-              <li className="text-secondary-foreground/80">Bubble Wrap</li>
-              <li className="text-secondary-foreground/80">Janitorial Supplies</li>
+              {products.map((product, index) => (
+                <li key={index} className="text-secondary-foreground/80">{product}</li>
+              ))}
             </ul>
           </div>
 
@@ -66,24 +64,26 @@ const Footer = () => {
             <ul className="space-y-3 text-sm">
               <li className="flex items-center gap-2">
                 <Mail size={16} className="text-primary" />
-                <a href="mailto:sales@casestore.us" className="hover:text-primary transition-colors">
-                  sales@casestore.us
+                <a href={`mailto:${email}`} className="hover:text-primary transition-colors">
+                  {email}
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Phone size={16} className="text-primary" />
-                <span className="text-secondary-foreground/80">WhatsApp Available</span>
+                <span className="text-secondary-foreground/80">
+                  {phone || 'WhatsApp Available'}
+                </span>
               </li>
               <li className="flex items-center gap-2">
                 <MapPin size={16} className="text-primary" />
-                <span className="text-secondary-foreground/80">United States</span>
+                <span className="text-secondary-foreground/80">{location}</span>
               </li>
             </ul>
           </div>
         </div>
 
         <div className="mt-8 pt-8 border-t border-secondary-foreground/10 text-center text-sm text-secondary-foreground/80">
-          <p>&copy; {new Date().getFullYear()} {siteName} LLC. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {copyright}</p>
         </div>
       </div>
     </footer>
