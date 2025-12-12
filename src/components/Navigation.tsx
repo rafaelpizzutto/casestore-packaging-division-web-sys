@@ -3,9 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useMenuItems, useSiteSettings } from "@/hooks/useCMS";
+import QuoteRequestDialog from "./QuoteRequestDialog";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isQuoteOpen, setIsQuoteOpen] = useState(false);
   const { data: menuItems } = useMenuItems();
   const { data: settings } = useSiteSettings();
 
@@ -24,64 +26,68 @@ const Navigation = () => {
   ];
 
   return (
-    <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
-          <Link to="/" className="flex items-center space-x-2">
-            {logoUrl ? (
-              <img src={logoUrl} alt={siteName} className="h-10 w-auto" />
-            ) : (
-              <div className="text-2xl font-bold text-foreground">
-                {siteName}<span className="text-primary">.</span>
-              </div>
-            )}
-          </Link>
+    <>
+      <nav className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b border-border">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-between h-16">
+            <Link to="/" className="flex items-center space-x-2">
+              {logoUrl ? (
+                <img src={logoUrl} alt={siteName} className="h-10 w-auto" />
+              ) : (
+                <div className="text-2xl font-bold text-foreground">
+                  {siteName}<span className="text-primary">.</span>
+                </div>
+              )}
+            </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Button size="sm" className="ml-4">
-              Get Quote
-            </Button>
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Button size="sm" className="ml-4" onClick={() => setIsQuoteOpen(true)}>
+                Get Quote
+              </Button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
           </div>
 
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden p-2"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Mobile Navigation */}
+          {isMenuOpen && (
+            <div className="md:hidden py-4 space-y-4 animate-in slide-in-from-top">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.path}
+                  to={link.path}
+                  className="block text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <Button className="w-full" onClick={() => { setIsMenuOpen(false); setIsQuoteOpen(true); }}>
+                Get Quote
+              </Button>
+            </div>
+          )}
         </div>
+      </nav>
 
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 space-y-4 animate-in slide-in-from-top">
-            {navLinks.map((link) => (
-              <Link
-                key={link.path}
-                to={link.path}
-                className="block text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {link.name}
-              </Link>
-            ))}
-            <Button className="w-full" onClick={() => setIsMenuOpen(false)}>
-              Get Quote
-            </Button>
-          </div>
-        )}
-      </div>
-    </nav>
+      <QuoteRequestDialog open={isQuoteOpen} onOpenChange={setIsQuoteOpen} />
+    </>
   );
 };
 
