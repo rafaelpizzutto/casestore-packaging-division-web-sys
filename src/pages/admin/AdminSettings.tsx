@@ -1,11 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useSiteSettings, useUpdateSiteSetting } from '@/hooks/useCMS';
 import { useToast } from '@/hooks/use-toast';
-import { Loader2, Save } from 'lucide-react';
+import { Loader2, Save, Upload } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
 
 const AdminSettings = () => {
   const { data: settings, isLoading } = useSiteSettings();
@@ -13,6 +14,8 @@ const AdminSettings = () => {
   const { toast } = useToast();
   
   const [formData, setFormData] = useState<Record<string, string>>({});
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (settings) {
@@ -30,6 +33,35 @@ const AdminSettings = () => {
       toast({ title: 'Saved', description: `${key} updated successfully` });
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to save setting', variant: 'destructive' });
+    }
+  };
+
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `logo-${Date.now()}.${fileExt}`;
+      
+      const { error: uploadError } = await supabase.storage
+        .from('site-assets')
+        .upload(fileName, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('site-assets')
+        .getPublicUrl(fileName);
+
+      await updateSetting.mutateAsync({ key: 'logo_url', value: publicUrl });
+      setFormData({ ...formData, logo_url: publicUrl });
+      toast({ title: 'Uploaded', description: 'Logo uploaded successfully' });
+    } catch (error) {
+      toast({ title: 'Error', description: 'Failed to upload logo', variant: 'destructive' });
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -70,17 +102,34 @@ const AdminSettings = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="logo_url">Logo URL</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="logo_url"
-                  value={formData.logo_url || ''}
-                  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
-                  placeholder="https://example.com/logo.png"
+              <Label>Logo</Label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleLogoUpload}
+                  accept="image/*"
+                  className="hidden"
                 />
-                <Button onClick={() => handleSave('logo_url')} size="icon">
-                  <Save className="h-4 w-4" />
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  variant="outline"
+                  disabled={uploading}
+                >
+                  {uploading ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-2" />
+                  )}
+                  Upload Logo
                 </Button>
+                {formData.logo_url && (
+                  <img 
+                    src={formData.logo_url} 
+                    alt="Current logo" 
+                    className="h-10 object-contain"
+                  />
+                )}
               </div>
             </div>
           </CardContent>
