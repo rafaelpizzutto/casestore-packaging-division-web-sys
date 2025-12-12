@@ -1,15 +1,24 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 const Footer = () => {
+  const { data: settings } = useSiteSettings();
+  const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
+  const logoUrl = settings?.find(s => s.key === 'logo_url')?.value;
+
   return (
     <footer className="bg-secondary text-secondary-foreground">
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">
-              CaseStore<span className="text-primary">.</span>
-            </h3>
+            {logoUrl ? (
+              <img src={logoUrl} alt={siteName} className="h-10 w-auto mb-4" />
+            ) : (
+              <h3 className="text-xl font-bold mb-4">
+                {siteName}<span className="text-primary">.</span>
+              </h3>
+            )}
             <p className="text-sm text-secondary-foreground/80">
               Your trusted partner for packaging supplies, logistics solutions, and warehouse management technology.
             </p>
@@ -74,7 +83,7 @@ const Footer = () => {
         </div>
 
         <div className="mt-8 pt-8 border-t border-secondary-foreground/10 text-center text-sm text-secondary-foreground/80">
-          <p>&copy; {new Date().getFullYear()} CaseStore LLC. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} {siteName} LLC. All rights reserved.</p>
         </div>
       </div>
     </footer>

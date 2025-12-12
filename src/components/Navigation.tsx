@@ -10,6 +10,7 @@ const Navigation = () => {
   const { data: settings } = useSiteSettings();
 
   const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
+  const logoUrl = settings?.find(s => s.key === 'logo_url')?.value;
 
   const navLinks = menuItems?.map(item => ({
     name: item.name,
@@ -27,9 +28,13 @@ const Navigation = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           <Link to="/" className="flex items-center space-x-2">
-            <div className="text-2xl font-bold text-foreground">
-              {siteName}<span className="text-primary">.</span>
-            </div>
+            {logoUrl ? (
+              <img src={logoUrl} alt={siteName} className="h-10 w-auto" />
+            ) : (
+              <div className="text-2xl font-bold text-foreground">
+                {siteName}<span className="text-primary">.</span>
+              </div>
+            )}
           </Link>
 
           {/* Desktop Navigation */}
