@@ -10,6 +10,7 @@ import { Loader2, Save, Upload } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
+import PricingTierEditor from '@/components/admin/PricingTierEditor';
 
 const AdminSettings = () => {
   const { data: settings, isLoading } = useSiteSettings();
@@ -390,23 +391,18 @@ const AdminSettings = () => {
                 </Button>
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="warehouse_tracker_pricing_json">Pricing Tiers (JSON)</Label>
-              <div className="flex gap-2">
-                <Textarea
-                  id="warehouse_tracker_pricing_json"
-                  value={formData.warehouse_tracker_pricing_json || ''}
-                  onChange={(e) => setFormData({ ...formData, warehouse_tracker_pricing_json: e.target.value })}
-                  placeholder='[{"name":"Starter","description":"...","features":["..."]}]'
-                  rows={4}
-                  className="font-mono text-xs"
-                />
-                <Button onClick={() => handleSave('warehouse_tracker_pricing_json')} size="icon" className="self-start">
-                  <Save className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-muted-foreground">JSON array with name, description, features array. Add "recommended": true for highlighted tier.</p>
-            </div>
+            <PricingTierEditor
+              value={formData.warehouse_tracker_pricing_json || ''}
+              onSave={async (jsonValue) => {
+                try {
+                  await updateSetting.mutateAsync({ key: 'warehouse_tracker_pricing_json', value: jsonValue });
+                  setFormData({ ...formData, warehouse_tracker_pricing_json: jsonValue });
+                  toast({ title: 'Saved', description: 'Pricing tiers updated successfully' });
+                } catch (error) {
+                  toast({ title: 'Error', description: 'Failed to save pricing', variant: 'destructive' });
+                }
+              }}
+            />
           </CardContent>
         </Card>
       </div>
