@@ -287,6 +287,59 @@ const AdminSettings = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Products Page</CardTitle>
+            <CardDescription>Customize the products page header and categories</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="products_title">Page Title</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="products_title"
+                  value={formData.products_title || ''}
+                  onChange={(e) => setFormData({ ...formData, products_title: e.target.value })}
+                  placeholder="Our Products"
+                />
+                <Button onClick={() => handleSave('products_title')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="products_subtitle">Page Subtitle</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="products_subtitle"
+                  value={formData.products_subtitle || ''}
+                  onChange={(e) => setFormData({ ...formData, products_subtitle: e.target.value })}
+                  placeholder="Premium packaging supplies..."
+                  rows={2}
+                />
+                <Button onClick={() => handleSave('products_subtitle')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="products_categories">Categories (comma-separated)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="products_categories"
+                  value={formData.products_categories || ''}
+                  onChange={(e) => setFormData({ ...formData, products_categories: e.target.value })}
+                  placeholder="All,Film,Boxes,Tape,Protection,Janitorial"
+                />
+                <Button onClick={() => handleSave('products_categories')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">First category is typically "All" to show all products</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

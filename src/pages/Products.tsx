@@ -4,6 +4,7 @@ import ProductCard from "@/components/ProductCard";
 import QuoteRequestDialog from "@/components/QuoteRequestDialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 import stretchFilm from "@/assets/products/stretch-film.jpg";
 import boxes from "@/assets/products/boxes.jpg";
@@ -15,13 +16,21 @@ const Products = () => {
   const [activeFilter, setActiveFilter] = useState("All");
   const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<{ title: string; category: string } | null>(null);
+  const { data: settings } = useSiteSettings();
+
+  const getSetting = (key: string, fallback: string = '') => {
+    return settings?.find(s => s.key === key)?.value || fallback;
+  };
 
   const handleQuoteClick = (title: string, category: string) => {
     setSelectedProduct({ title, category });
     setQuoteDialogOpen(true);
   };
 
-  const filters = ["All", "Film", "Boxes", "Tape", "Protection", "Janitorial"];
+  const pageTitle = getSetting('products_title', 'Our Products');
+  const pageSubtitle = getSetting('products_subtitle', 'Premium packaging supplies and materials for all your warehouse and logistics needs');
+  const categoriesString = getSetting('products_categories', 'All,Film,Boxes,Tape,Protection,Janitorial');
+  const filters = categoriesString.split(',').map(c => c.trim()).filter(Boolean);
 
   const products = [
     {
@@ -121,9 +130,9 @@ const Products = () => {
       {/* Hero Section */}
       <section className="bg-gradient-to-b from-muted/50 to-background py-16">
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">{pageTitle}</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Premium packaging supplies and materials for all your warehouse and logistics needs
+            {pageSubtitle}
           </p>
         </div>
       </section>
