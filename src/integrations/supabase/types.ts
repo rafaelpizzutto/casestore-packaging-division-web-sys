@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      contact_submissions: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          status?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       menu_items: {
         Row: {
           created_at: string
@@ -73,6 +106,48 @@ export type Database = {
           page?: string
           section?: string
           sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      quote_requests: {
+        Row: {
+          company: string | null
+          created_at: string
+          email: string
+          estimated_quantity: string | null
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+          product_interest: string | null
+          status: string | null
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          email: string
+          estimated_quantity?: string | null
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+          product_interest?: string | null
+          status?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          email?: string
+          estimated_quantity?: string | null
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+          product_interest?: string | null
+          status?: string | null
           updated_at?: string
         }
         Relationships: []
