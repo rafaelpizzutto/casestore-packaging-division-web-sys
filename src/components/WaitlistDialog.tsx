@@ -22,7 +22,7 @@ const WaitlistDialog = ({ open, onOpenChange }: WaitlistDialogProps) => {
     company: "",
     phone: "",
     business_type: "",
-    notes: "",
+    notes: "Please contact me when Warehouse Tracker AI is released.",
   });
 
   const { data: settings } = useSiteSettings();
@@ -52,7 +52,7 @@ const WaitlistDialog = ({ open, onOpenChange }: WaitlistDialogProps) => {
       }
 
       toast.success("You've been added to the waitlist! We'll be in touch soon.");
-      setFormData({ name: "", email: "", company: "", phone: "", business_type: "", notes: "" });
+      setFormData({ name: "", email: "", company: "", phone: "", business_type: "", notes: "Please contact me when Warehouse Tracker AI is released." });
       onOpenChange(false);
     } catch (error) {
       console.error('Error submitting waitlist:', error);
