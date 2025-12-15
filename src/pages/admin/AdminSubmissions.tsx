@@ -33,11 +33,24 @@ interface QuoteRequest {
   created_at: string;
 }
 
+interface WaitlistSignup {
+  id: string;
+  name: string;
+  email: string;
+  company: string | null;
+  phone: string | null;
+  business_type: string | null;
+  notes: string | null;
+  status: string | null;
+  created_at: string;
+}
+
 const AdminSubmissions = () => {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [selectedContact, setSelectedContact] = useState<ContactSubmission | null>(null);
   const [selectedQuote, setSelectedQuote] = useState<QuoteRequest | null>(null);
+  const [selectedWaitlist, setSelectedWaitlist] = useState<WaitlistSignup | null>(null);
 
   const { data: contacts, isLoading: contactsLoading } = useQuery({
     queryKey: ['contact-submissions'],
@@ -60,6 +73,18 @@ const AdminSubmissions = () => {
         .order('created_at', { ascending: false });
       if (error) throw error;
       return data as QuoteRequest[];
+    },
+  });
+
+  const { data: waitlist, isLoading: waitlistLoading } = useQuery({
+    queryKey: ['waitlist-signups'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('waitlist_signups')
+        .select('*')
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as WaitlistSignup[];
     },
   });
 
@@ -119,6 +144,34 @@ const AdminSubmissions = () => {
     },
   });
 
+  const updateWaitlistStatus = useMutation({
+    mutationFn: async ({ id, status }: { id: string; status: string }) => {
+      const { error } = await supabase
+        .from('waitlist_signups')
+        .update({ status })
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['waitlist-signups'] });
+      toast({ title: 'Status updated' });
+    },
+  });
+
+  const deleteWaitlist = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('waitlist_signups')
+        .delete()
+        .eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['waitlist-signups'] });
+      toast({ title: 'Waitlist signup deleted' });
+    },
+  });
+
   const getStatusBadge = (status: string | null) => {
     switch (status) {
       case 'new':
@@ -127,12 +180,14 @@ const AdminSubmissions = () => {
         return <Badge variant="secondary">Read</Badge>;
       case 'responded':
         return <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200">Responded</Badge>;
+      case 'contacted':
+        return <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">Contacted</Badge>;
       default:
         return <Badge variant="default">New</Badge>;
     }
   };
 
-  if (contactsLoading || quotesLoading) {
+  if (contactsLoading || quotesLoading || waitlistLoading) {
     return (
       <div className="flex items-center justify-center h-64">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -147,8 +202,11 @@ const AdminSubmissions = () => {
         <p className="text-muted-foreground">Manage contact form and quote request submissions</p>
       </div>
 
-      <Tabs defaultValue="quotes">
+      <Tabs defaultValue="waitlist">
         <TabsList>
+          <TabsTrigger value="waitlist">
+            Waitlist ({waitlist?.length || 0})
+          </TabsTrigger>
           <TabsTrigger value="quotes">
             Quote Requests ({quotes?.length || 0})
           </TabsTrigger>
@@ -156,6 +214,82 @@ const AdminSubmissions = () => {
             Contact Forms ({contacts?.length || 0})
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="waitlist" className="space-y-4 mt-4">
+          {waitlist?.length === 0 ? (
+            <Card>
+              <CardContent className="py-8 text-center text-muted-foreground">
+                No waitlist signups yet.
+              </CardContent>
+            </Card>
+          ) : (
+            waitlist?.map((signup) => (
+              <Card key={signup.id}>
+                <CardHeader className="pb-2">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <CardTitle className="text-lg flex items-center gap-2">
+                        {signup.name}
+                        {getStatusBadge(signup.status)}
+                      </CardTitle>
+                      <CardDescription className="flex items-center gap-4 mt-1">
+                        <span className="flex items-center gap-1">
+                          <Mail className="h-3 w-3" />
+                          {signup.email}
+                        </span>
+                        {signup.phone && (
+                          <span className="flex items-center gap-1">
+                            <Phone className="h-3 w-3" />
+                            {signup.phone}
+                          </span>
+                        )}
+                        {signup.company && (
+                          <span className="flex items-center gap-1">
+                            <Building className="h-3 w-3" />
+                            {signup.company}
+                          </span>
+                        )}
+                      </CardDescription>
+                    </div>
+                    <span className="text-xs text-muted-foreground flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      {format(new Date(signup.created_at), 'MMM d, yyyy h:mm a')}
+                    </span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    <strong>Business Type:</strong> {signup.business_type || 'Not specified'}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setSelectedWaitlist(signup)}>
+                      <Eye className="h-4 w-4 mr-1" />
+                      View Details
+                    </Button>
+                    {signup.status !== 'contacted' && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => updateWaitlistStatus.mutate({ id: signup.id, status: 'contacted' })}
+                      >
+                        <Check className="h-4 w-4 mr-1" />
+                        Mark Contacted
+                      </Button>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="text-destructive hover:bg-destructive hover:text-destructive-foreground"
+                      onClick={() => deleteWaitlist.mutate(signup.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </TabsContent>
 
         <TabsContent value="quotes" className="space-y-4 mt-4">
           {quotes?.length === 0 ? (
@@ -327,6 +461,35 @@ const AdminSubmissions = () => {
                 <div>
                   <p className="font-semibold text-sm">Full Details</p>
                   <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-lg">{selectedQuote.message}</p>
+                </div>
+              )}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Waitlist Details Dialog */}
+      <Dialog open={!!selectedWaitlist} onOpenChange={() => setSelectedWaitlist(null)}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Waitlist Signup Details</DialogTitle>
+          </DialogHeader>
+          {selectedWaitlist && (
+            <div className="space-y-4">
+              <div>
+                <p className="font-semibold">{selectedWaitlist.name}</p>
+                <p className="text-sm text-muted-foreground">{selectedWaitlist.email}</p>
+                {selectedWaitlist.phone && <p className="text-sm text-muted-foreground">{selectedWaitlist.phone}</p>}
+                {selectedWaitlist.company && <p className="text-sm text-muted-foreground">{selectedWaitlist.company}</p>}
+              </div>
+              <div>
+                <p className="font-semibold text-sm">Business Type</p>
+                <p className="text-sm">{selectedWaitlist.business_type || 'Not specified'}</p>
+              </div>
+              {selectedWaitlist.notes && (
+                <div>
+                  <p className="font-semibold text-sm">Notes</p>
+                  <p className="text-sm whitespace-pre-wrap bg-muted p-3 rounded-lg">{selectedWaitlist.notes}</p>
                 </div>
               )}
             </div>

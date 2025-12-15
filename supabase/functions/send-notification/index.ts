@@ -9,7 +9,7 @@ const corsHeaders = {
 };
 
 interface NotificationRequest {
-  type: "contact" | "quote";
+  type: "contact" | "quote" | "waitlist";
   data: {
     name: string;
     email: string;
@@ -22,6 +22,8 @@ interface NotificationRequest {
       quantityUnit: string;
     }>;
     additionalNotes?: string;
+    business_type?: string;
+    notes?: string;
   };
   adminEmail: string;
 }
@@ -49,6 +51,22 @@ const handler = async (req: Request): Promise<Response> => {
         <p>${data.message}</p>
         <hr>
         <p style="color: #666; font-size: 12px;">This message was sent from your website contact form.</p>
+      `;
+    } else if (type === "waitlist") {
+      subject = `New Waitlist Signup: ${data.name} (${data.company || "No Company"})`;
+      htmlContent = `
+        <h2>New Warehouse Tracker AI Waitlist Signup</h2>
+        <h3>Contact Information:</h3>
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Company:</strong> ${data.company || "Not provided"}</p>
+        <p><strong>Phone:</strong> ${data.phone || "Not provided"}</p>
+        <p><strong>Business Type:</strong> ${data.business_type || "Not provided"}</p>
+        
+        ${data.notes ? `<h3>Additional Notes:</h3><p>${data.notes}</p>` : ""}
+        
+        <hr>
+        <p style="color: #666; font-size: 12px;">This signup was submitted through your Warehouse Tracker AI waitlist.</p>
       `;
     } else {
       subject = `New Quote Request from ${data.name} (${data.company || "No Company"})`;
