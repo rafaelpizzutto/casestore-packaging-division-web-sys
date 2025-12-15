@@ -110,6 +110,48 @@ export type Database = {
         }
         Relationships: []
       }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_new: boolean | null
+          is_visible: boolean | null
+          name: string
+          price: number | null
+          sort_order: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_new?: boolean | null
+          is_visible?: boolean | null
+          name: string
+          price?: number | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_new?: boolean | null
+          is_visible?: boolean | null
+          name?: string
+          price?: number | null
+          sort_order?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       quote_requests: {
         Row: {
           company: string | null

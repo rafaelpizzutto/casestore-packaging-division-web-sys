@@ -17,6 +17,7 @@ import AdminMenu from "./pages/admin/AdminMenu";
 import AdminImages from "./pages/admin/AdminImages";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminSubmissions from "./pages/admin/AdminSubmissions";
+import AdminProducts from "./pages/admin/AdminProducts";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +43,7 @@ const App = () => (
               <Route path="images" element={<AdminImages />} />
               <Route path="content" element={<AdminContent />} />
               <Route path="submissions" element={<AdminSubmissions />} />
+              <Route path="products" element={<AdminProducts />} />
             </Route>
             
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

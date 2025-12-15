@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, Link, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Loader2, Settings, Menu, Image, FileText, LogOut, Home, Inbox } from 'lucide-react';
+import { Loader2, Settings, Menu, Image, FileText, LogOut, Home, Inbox, Package } from 'lucide-react';
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -33,6 +33,7 @@ const Admin = () => {
 
   const navItems = [
     { name: 'Settings', path: '/admin', icon: Settings },
+    { name: 'Products', path: '/admin/products', icon: Package },
     { name: 'Menu', path: '/admin/menu', icon: Menu },
     { name: 'Images', path: '/admin/images', icon: Image },
     { name: 'Content', path: '/admin/content', icon: FileText },
