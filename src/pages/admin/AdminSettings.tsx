@@ -188,6 +188,50 @@ const AdminSettings = () => {
                 </Button>
               </div>
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="contact_subtitle">Location Subtitle</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="contact_subtitle"
+                  value={formData.contact_subtitle || ''}
+                  onChange={(e) => setFormData({ ...formData, contact_subtitle: e.target.value })}
+                  placeholder="Serving warehouses and businesses nationwide"
+                />
+                <Button onClick={() => handleSave('contact_subtitle')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="whatsapp_number">WhatsApp Number</Label>
+              <div className="flex gap-2 items-center">
+                <PhoneInput
+                  international
+                  defaultCountry="US"
+                  value={formData.whatsapp_number || ''}
+                  onChange={(value) => setFormData({ ...formData, whatsapp_number: value || '' })}
+                  className="flex-1 flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2 [&>input]:border-0 [&>input]:bg-transparent [&>input]:outline-none [&>input]:flex-1"
+                />
+                <Button onClick={() => handleSave('whatsapp_number')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="support_hours">Support Hours</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="support_hours"
+                  value={formData.support_hours || ''}
+                  onChange={(e) => setFormData({ ...formData, support_hours: e.target.value })}
+                  placeholder="Monday - Friday: 8:00 AM - 6:00 PM EST&#10;Saturday: 9:00 AM - 2:00 PM EST"
+                  rows={3}
+                />
+                <Button onClick={() => handleSave('support_hours')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

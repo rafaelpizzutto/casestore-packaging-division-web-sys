@@ -8,15 +8,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 const Contact = () => {
   const { toast } = useToast();
+  const { data: settings } = useSiteSettings();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     company: "",
     message: "",
   });
+
+  const getSetting = (key: string, fallback: string = '') => {
+    return settings?.find(s => s.key === key)?.value || fallback;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +39,15 @@ const Contact = () => {
       [e.target.name]: e.target.value,
     });
   };
+
+  const contactEmail = getSetting('contact_email', 'info@casestore.us');
+  const contactPhone = getSetting('contact_phone', '+13239482269');
+  const whatsappNumber = getSetting('whatsapp_number', contactPhone);
+  const contactLocation = getSetting('contact_location', 'United States');
+  const contactSubtitle = getSetting('contact_subtitle', 'Serving warehouses and businesses nationwide');
+  const supportHours = getSetting('support_hours', 'Monday - Friday: 8:00 AM - 6:00 PM EST\nSaturday: 9:00 AM - 2:00 PM EST');
+
+  const whatsappLink = `https://wa.me/${whatsappNumber?.replace(/[^0-9]/g, '')}`;
 
   return (
     <div className="min-h-screen bg-background">
@@ -119,19 +134,17 @@ const Contact = () => {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 rounded-full p-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <Mail className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
-                      <p className="text-muted-foreground mb-2">
-                        Get in touch via email
-                      </p>
-                      <a
-                        href="mailto:sales@casestore.us"
-                        className="text-primary hover:underline font-medium"
+                      <p className="text-muted-foreground text-sm mb-2">Get in touch via email</p>
+                      <a 
+                        href={`mailto:${contactEmail}`}
+                        className="text-primary hover:underline"
                       >
-                        sales@casestore.us
+                        {contactEmail}
                       </a>
                     </div>
                   </div>
@@ -141,17 +154,21 @@ const Contact = () => {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 rounded-full p-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <MessageCircle className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">WhatsApp</h3>
-                      <p className="text-muted-foreground mb-2">
-                        Quick response via WhatsApp
-                      </p>
-                      <Button variant="outline" size="sm">
-                        Chat on WhatsApp
-                      </Button>
+                      <p className="text-muted-foreground text-sm mb-2">Quick response via WhatsApp</p>
+                      <a 
+                        href={whatsappLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <Button variant="outline" size="sm">
+                          Chat on WhatsApp
+                        </Button>
+                      </a>
                     </div>
                   </div>
                 </CardContent>
@@ -160,17 +177,13 @@ const Contact = () => {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 rounded-full p-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <MapPin className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Location</h3>
-                      <p className="text-muted-foreground">
-                        United States
-                      </p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        Serving warehouses and businesses nationwide
-                      </p>
+                      <p className="text-muted-foreground">{contactLocation}</p>
+                      <p className="text-muted-foreground text-sm">{contactSubtitle}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -179,17 +192,14 @@ const Contact = () => {
               <Card>
                 <CardContent className="pt-6">
                   <div className="flex items-start gap-4">
-                    <div className="bg-primary/10 rounded-full p-3">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                       <Phone className="h-6 w-6 text-primary" />
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Support Hours</h3>
-                      <p className="text-muted-foreground">
-                        Monday - Friday: 8:00 AM - 6:00 PM EST
-                      </p>
-                      <p className="text-muted-foreground">
-                        Saturday: 9:00 AM - 2:00 PM EST
-                      </p>
+                      {supportHours.split('\n').map((line, index) => (
+                        <p key={index} className="text-muted-foreground">{line}</p>
+                      ))}
                     </div>
                   </div>
                 </CardContent>
@@ -199,12 +209,13 @@ const Contact = () => {
         </div>
       </section>
 
-      {/* Map Section (Placeholder) */}
+      {/* Map Section */}
       <section className="py-20 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
-            <div className="aspect-video bg-muted rounded-2xl flex items-center justify-center">
-              <p className="text-muted-foreground">Map placeholder - Location to be added</p>
+            <h2 className="text-3xl font-bold text-center mb-8">Visit Us</h2>
+            <div className="bg-muted rounded-lg h-64 flex items-center justify-center">
+              <p className="text-muted-foreground">Map will be displayed here</p>
             </div>
           </div>
         </div>
