@@ -1,91 +1,68 @@
+import { useState } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import Hero from "@/components/Hero";
 import FeatureCard from "@/components/FeatureCard";
+import WaitlistDialog from "@/components/WaitlistDialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Package, ClipboardCheck, BarChart3, Users, Bell, Brain, FileText, TrendingUp } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 import warehouseTrackerAi from "@/assets/warehouse-tracker-ai.jpg";
 
 const WarehouseTracker = () => {
-  const features = [
-    {
-      icon: Package,
-      title: "Order Placement Portal",
-      description: "Streamlined ordering system with real-time product catalog and instant order confirmation.",
-    },
-    {
-      icon: ClipboardCheck,
-      title: "Live Order Status",
-      description: "Track every order from placement to delivery with real-time status updates and notifications.",
-    },
-    {
-      icon: FileText,
-      title: "Invoice Tracking",
-      description: "Complete invoice history and automated tracking for all transactions and payments.",
-    },
-    {
-      icon: BarChart3,
-      title: "Custom Catalogs",
-      description: "Create personalized product catalogs tailored to your warehouse's specific needs.",
-    },
-    {
-      icon: TrendingUp,
-      title: "Stock Organization",
-      description: "Advanced inventory management tools with smart organization and categorization.",
-    },
-    {
-      icon: Users,
-      title: "Supplier Communication",
-      description: "Direct messaging and collaboration tools for seamless supplier coordination.",
-    },
-    {
-      icon: Brain,
-      title: "AI Insights",
-      description: "Intelligent analytics and predictive insights to optimize warehouse operations.",
-    },
-    {
-      icon: Bell,
-      title: "Smart Reporting",
-      description: "Automated reports and analytics to track performance and identify opportunities.",
-    },
-  ];
+  const [waitlistOpen, setWaitlistOpen] = useState(false);
+  const { data: settings } = useSiteSettings();
 
-  const pricingTiers = [
+  const getSetting = (key: string, fallback: string = '') => {
+    return settings?.find(s => s.key === key)?.value || fallback;
+  };
+
+  const pageTitle = getSetting('warehouse_tracker_title', 'Warehouse Management Made Simple. Meet Warehouse Tracker AI.');
+  const pageSubtitle = getSetting('warehouse_tracker_subtitle', 'Transform your warehouse operations with AI-powered tools for order management, inventory tracking, and intelligent insights.');
+  const demoLink = getSetting('warehouse_tracker_demo_link', '/contact');
+  const screenshot1 = getSetting('warehouse_tracker_screenshot1');
+  const screenshot2 = getSetting('warehouse_tracker_screenshot2');
+
+  // Parse pricing JSON or use defaults
+  let pricingTiers = [
     {
       name: "Starter",
       description: "Perfect for small warehouses",
-      features: [
-        "Up to 100 orders/month",
-        "Basic order tracking",
-        "Standard catalog",
-        "Email support",
-      ],
+      features: ["Up to 100 orders/month", "Basic order tracking", "Standard catalog", "Email support"],
     },
     {
       name: "Professional",
       description: "For growing operations",
-      features: [
-        "Up to 500 orders/month",
-        "Advanced tracking & analytics",
-        "Custom catalogs",
-        "Priority support",
-        "AI insights",
-      ],
+      features: ["Up to 500 orders/month", "Advanced tracking & analytics", "Custom catalogs", "Priority support", "AI insights"],
       recommended: true,
     },
     {
       name: "Enterprise",
       description: "For large-scale operations",
-      features: [
-        "Unlimited orders",
-        "Full AI suite",
-        "Custom integrations",
-        "Dedicated account manager",
-        "24/7 phone support",
-      ],
+      features: ["Unlimited orders", "Full AI suite", "Custom integrations", "Dedicated account manager", "24/7 phone support"],
     },
+  ];
+
+  const pricingJson = getSetting('warehouse_tracker_pricing_json');
+  if (pricingJson) {
+    try {
+      pricingTiers = JSON.parse(pricingJson);
+    } catch (e) {
+      console.error('Error parsing pricing JSON:', e);
+    }
+  }
+
+  const features = [
+    { icon: Package, title: "Order Placement Portal", description: "Streamlined ordering system with real-time product catalog and instant order confirmation." },
+    { icon: ClipboardCheck, title: "Live Order Status", description: "Track every order from placement to delivery with real-time status updates and notifications." },
+    { icon: FileText, title: "Invoice Tracking", description: "Complete invoice history and automated tracking for all transactions and payments." },
+    { icon: BarChart3, title: "Custom Catalogs", description: "Create personalized product catalogs tailored to your warehouse's specific needs." },
+    { icon: TrendingUp, title: "Stock Organization", description: "Advanced inventory management tools with smart organization and categorization." },
+    { icon: Users, title: "Supplier Communication", description: "Direct messaging and collaboration tools for seamless supplier coordination." },
+    { icon: Brain, title: "AI Insights", description: "Intelligent analytics and predictive insights to optimize warehouse operations." },
+    { icon: Bell, title: "Smart Reporting", description: "Automated reports and analytics to track performance and identify opportunities." },
   ];
 
   return (
@@ -93,9 +70,9 @@ const WarehouseTracker = () => {
       <Navigation />
       
       <Hero
-        title="Warehouse Management Made Simple. Meet Warehouse Tracker AI."
-        subtitle="Transform your warehouse operations with AI-powered tools for order management, inventory tracking, and intelligent insights."
-        primaryCta={{ text: "Request Demo", link: "/contact" }}
+        title={pageTitle}
+        subtitle={pageSubtitle}
+        primaryCta={{ text: "Request Demo", link: demoLink }}
         secondaryCta={{ text: "View Features", link: "#features" }}
         image={warehouseTrackerAi}
         imageAlt="Warehouse Tracker AI Dashboard Interface"
@@ -131,7 +108,7 @@ const WarehouseTracker = () => {
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 <img
-                  src={warehouseTrackerAi}
+                  src={screenshot1 || warehouseTrackerAi}
                   alt="Dashboard overview"
                   className="w-full h-auto"
                 />
@@ -140,7 +117,7 @@ const WarehouseTracker = () => {
             <Card className="overflow-hidden">
               <CardContent className="p-0">
                 <img
-                  src={warehouseTrackerAi}
+                  src={screenshot2 || warehouseTrackerAi}
                   alt="Order tracking interface"
                   className="w-full h-auto"
                 />
@@ -160,7 +137,7 @@ const WarehouseTracker = () => {
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {pricingTiers.map((tier) => (
+            {pricingTiers.map((tier: any) => (
               <Card key={tier.name} className={tier.recommended ? "border-primary border-2 shadow-lg" : ""}>
                 <CardContent className="pt-6">
                   {tier.recommended && (
@@ -171,7 +148,7 @@ const WarehouseTracker = () => {
                   <h3 className="text-2xl font-bold mb-2">{tier.name}</h3>
                   <p className="text-muted-foreground mb-6">{tier.description}</p>
                   <ul className="space-y-3 mb-6">
-                    {tier.features.map((feature) => (
+                    {tier.features?.map((feature: string) => (
                       <li key={feature} className="flex items-start gap-2">
                         <div className="bg-primary/10 rounded-full p-1 mt-0.5">
                           <div className="h-2 w-2 rounded-full bg-primary"></div>
@@ -180,7 +157,11 @@ const WarehouseTracker = () => {
                       </li>
                     ))}
                   </ul>
-                  <Button className="w-full" variant={tier.recommended ? "default" : "outline"}>
+                  <Button 
+                    className="w-full" 
+                    variant={tier.recommended ? "default" : "outline"}
+                    onClick={() => setWaitlistOpen(true)}
+                  >
                     Get Started
                   </Button>
                 </CardContent>
@@ -191,7 +172,7 @@ const WarehouseTracker = () => {
             <p className="text-muted-foreground mb-4">
               Coming Soon — Join the Waitlist
             </p>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" onClick={() => setWaitlistOpen(true)}>
               Join Waitlist
             </Button>
           </div>
@@ -207,13 +188,15 @@ const WarehouseTracker = () => {
           <p className="text-lg mb-8 max-w-2xl mx-auto opacity-90">
             Request a demo today and see how Warehouse Tracker AI can streamline your operations
           </p>
-          <Button size="lg" variant="secondary">
-            Request Demo
+          <Button size="lg" variant="secondary" asChild>
+            <a href={demoLink}>Request Demo</a>
           </Button>
         </div>
       </section>
 
       <Footer />
+      
+      <WaitlistDialog open={waitlistOpen} onOpenChange={setWaitlistOpen} />
     </div>
   );
 };

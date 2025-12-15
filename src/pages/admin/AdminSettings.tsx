@@ -340,6 +340,75 @@ const AdminSettings = () => {
             </div>
           </CardContent>
         </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Warehouse Tracker Page</CardTitle>
+            <CardDescription>Customize the Warehouse Tracker AI page content</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label htmlFor="warehouse_tracker_title">Page Title</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="warehouse_tracker_title"
+                  value={formData.warehouse_tracker_title || ''}
+                  onChange={(e) => setFormData({ ...formData, warehouse_tracker_title: e.target.value })}
+                  placeholder="Warehouse Management Made Simple..."
+                />
+                <Button onClick={() => handleSave('warehouse_tracker_title')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="warehouse_tracker_subtitle">Page Subtitle</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="warehouse_tracker_subtitle"
+                  value={formData.warehouse_tracker_subtitle || ''}
+                  onChange={(e) => setFormData({ ...formData, warehouse_tracker_subtitle: e.target.value })}
+                  placeholder="Transform your warehouse operations..."
+                  rows={2}
+                />
+                <Button onClick={() => handleSave('warehouse_tracker_subtitle')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="warehouse_tracker_demo_link">Demo Request Link</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="warehouse_tracker_demo_link"
+                  value={formData.warehouse_tracker_demo_link || ''}
+                  onChange={(e) => setFormData({ ...formData, warehouse_tracker_demo_link: e.target.value })}
+                  placeholder="/contact"
+                />
+                <Button onClick={() => handleSave('warehouse_tracker_demo_link')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="warehouse_tracker_pricing_json">Pricing Tiers (JSON)</Label>
+              <div className="flex gap-2">
+                <Textarea
+                  id="warehouse_tracker_pricing_json"
+                  value={formData.warehouse_tracker_pricing_json || ''}
+                  onChange={(e) => setFormData({ ...formData, warehouse_tracker_pricing_json: e.target.value })}
+                  placeholder='[{"name":"Starter","description":"...","features":["..."]}]'
+                  rows={4}
+                  className="font-mono text-xs"
+                />
+                <Button onClick={() => handleSave('warehouse_tracker_pricing_json')} size="icon" className="self-start">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">JSON array with name, description, features array. Add "recommended": true for highlighted tier.</p>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
