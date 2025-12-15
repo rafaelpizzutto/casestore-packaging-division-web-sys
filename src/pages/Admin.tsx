@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate, Link, Outlet } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
-import { Loader2, Settings, Menu, Image, FileText, LogOut, Home } from 'lucide-react';
+import { Loader2, Settings, Menu, Image, FileText, LogOut, Home, Inbox } from 'lucide-react';
 
 const Admin = () => {
   const { user, isAdmin, loading, signOut } = useAuth();
@@ -36,6 +36,7 @@ const Admin = () => {
     { name: 'Menu', path: '/admin/menu', icon: Menu },
     { name: 'Images', path: '/admin/images', icon: Image },
     { name: 'Content', path: '/admin/content', icon: FileText },
+    { name: 'Submissions', path: '/admin/submissions', icon: Inbox },
   ];
 
   return (
