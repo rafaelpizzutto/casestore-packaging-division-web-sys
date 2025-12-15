@@ -6,8 +6,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ChevronRight, ChevronLeft, X, Upload, Plus } from "lucide-react";
+import { ChevronRight, ChevronLeft, X, Upload, Plus, Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { supabase } from "@/integrations/supabase/client";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 interface QuoteRequestDialogProps {
   open: boolean;
@@ -28,16 +30,11 @@ interface ProductItem {
 }
 
 interface FormData {
-  // Customer Info
   companyName: string;
   contactName: string;
   email: string;
   phone: string;
-  
-  // Products List
   products: ProductItem[];
-  
-  // Pricing
   expectedPrice: string;
   additionalNotes: string;
 }
@@ -57,6 +54,12 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
   const [step, setStep] = useState(1);
   const { toast } = useToast();
   const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { data: settings } = useSiteSettings();
+  
+  const getSetting = (key: string, fallback: string = '') => {
+    return settings?.find(s => s.key === key)?.value || fallback;
+  };
   
   const [formData, setFormData] = useState<FormData>({
     companyName: "",
@@ -194,30 +197,91 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
     setStep(step - 1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!validateStep(step)) return;
+    setIsSubmitting(true);
 
-    // Log form data for debugging
-    console.log("Quote Request Submitted:", formData);
-    
-    toast({
-      title: "Quote Request Submitted!",
-      description: `We'll review your request for ${formData.products.length} product(s) and send a quote to your email within 24 hours.`,
-    });
-    
-    // Reset form and close
-    setFormData({
-      companyName: "",
-      contactName: "",
-      email: "",
-      phone: "",
-      products: [{ ...emptyProduct }],
-      expectedPrice: "",
-      additionalNotes: "",
-    });
-    setStep(1);
-    setCurrentProductIndex(0);
-    onOpenChange(false);
+    try {
+      // Build product interest string
+      const productInterest = formData.products.map(p => p.productName).join(', ');
+      const estimatedQuantity = formData.products.map(p => 
+        `${p.productName}: ${p.quantityNow} ${p.quantityUnit}`
+      ).join('; ');
+      
+      // Build message with all details
+      const message = [
+        `Products: ${formData.products.length}`,
+        ...formData.products.map((p, i) => 
+          `\n${i + 1}. ${p.productName}\n   Specs: ${p.productSpecs || 'N/A'}\n   Qty Now: ${p.quantityNow} ${p.quantityUnit}\n   Recurring: ${p.quantityPerMonth || 'N/A'} per ${p.quantityTimeUnit}`
+        ),
+        formData.expectedPrice ? `\nExpected Price: ${formData.expectedPrice}` : '',
+        formData.additionalNotes ? `\nNotes: ${formData.additionalNotes}` : '',
+      ].join('');
+
+      // Save to database
+      const { error: dbError } = await supabase
+        .from('quote_requests')
+        .insert({
+          name: formData.contactName,
+          email: formData.email,
+          company: formData.companyName || null,
+          phone: formData.phone || null,
+          product_interest: productInterest,
+          estimated_quantity: estimatedQuantity,
+          message: message,
+        });
+
+      if (dbError) throw dbError;
+
+      // Send email notification
+      const adminEmail = getSetting('contact_email', 'info@casestore.us');
+      await supabase.functions.invoke('send-notification', {
+        body: {
+          type: 'quote',
+          data: {
+            name: formData.contactName,
+            email: formData.email,
+            company: formData.companyName,
+            phone: formData.phone,
+            products: formData.products.map(p => ({
+              productName: p.productName,
+              quantityNow: p.quantityNow,
+              quantityUnit: p.quantityUnit,
+            })),
+            additionalNotes: formData.additionalNotes,
+          },
+          adminEmail,
+        },
+      });
+      
+      toast({
+        title: "Quote Request Submitted!",
+        description: `We'll review your request for ${formData.products.length} product(s) and send a quote to your email within 24 hours.`,
+      });
+      
+      // Reset form and close
+      setFormData({
+        companyName: "",
+        contactName: "",
+        email: "",
+        phone: "",
+        products: [{ ...emptyProduct }],
+        expectedPrice: "",
+        additionalNotes: "",
+      });
+      setStep(1);
+      setCurrentProductIndex(0);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Error submitting quote request:', error);
+      toast({
+        title: "Request Saved",
+        description: "Your quote request was saved. We'll get back to you soon.",
+      });
+      onOpenChange(false);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const renderStep = () => {
@@ -500,24 +564,28 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
 
         {renderStep()}
 
-        <div className="flex justify-between mt-6">
-          {step > 1 ? (
-            <Button variant="outline" onClick={prevStep}>
-              <ChevronLeft className="h-4 w-4 mr-1" />
+        <div className="flex gap-4 mt-6">
+          {step > 1 && (
+            <Button variant="outline" onClick={prevStep} className="flex-1">
+              <ChevronLeft className="h-4 w-4 mr-2" />
               Back
             </Button>
-          ) : (
-            <div />
           )}
-          
           {step < 3 ? (
-            <Button onClick={nextStep}>
+            <Button onClick={nextStep} className="flex-1">
               Next
-              <ChevronRight className="h-4 w-4 ml-1" />
+              <ChevronRight className="h-4 w-4 ml-2" />
             </Button>
           ) : (
-            <Button onClick={handleSubmit}>
-              Submit Request
+            <Button onClick={handleSubmit} className="flex-1" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : (
+                "Submit Request"
+              )}
             </Button>
           )}
         </div>

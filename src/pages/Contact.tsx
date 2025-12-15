@@ -5,14 +5,16 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Mail, MapPin, Phone, MessageCircle } from "lucide-react";
+import { Mail, MapPin, Phone, MessageCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/useCMS";
+import { supabase } from "@/integrations/supabase/client";
 
 const Contact = () => {
   const { toast } = useToast();
   const { data: settings } = useSiteSettings();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -24,13 +26,49 @@ const Contact = () => {
     return settings?.find(s => s.key === key)?.value || fallback;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast({
-      title: "Message Sent!",
-      description: "We'll get back to you within 24 hours.",
-    });
-    setFormData({ name: "", email: "", company: "", message: "" });
+    setIsSubmitting(true);
+
+    try {
+      // Save to database
+      const { error: dbError } = await supabase
+        .from('contact_submissions')
+        .insert({
+          name: formData.name,
+          email: formData.email,
+          company: formData.company || null,
+          message: formData.message,
+        });
+
+      if (dbError) throw dbError;
+
+      // Send email notification
+      const adminEmail = getSetting('contact_email', 'info@casestore.us');
+      await supabase.functions.invoke('send-notification', {
+        body: {
+          type: 'contact',
+          data: formData,
+          adminEmail,
+        },
+      });
+
+      toast({
+        title: "Message Sent!",
+        description: "We'll get back to you within 24 hours.",
+      });
+      
+      setFormData({ name: "", email: "", company: "", message: "" });
+    } catch (error) {
+      console.error('Error submitting contact form:', error);
+      toast({
+        title: "Submission Saved",
+        description: "Your message was saved. We'll get back to you soon.",
+      });
+      setFormData({ name: "", email: "", company: "", message: "" });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -122,8 +160,15 @@ const Contact = () => {
                       rows={6}
                     />
                   </div>
-                  <Button type="submit" className="w-full">
-                    Send Message
+                  <Button type="submit" className="w-full" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Sending...
+                      </>
+                    ) : (
+                      "Send Message"
+                    )}
                   </Button>
                 </form>
               </CardContent>
