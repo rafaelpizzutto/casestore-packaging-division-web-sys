@@ -4,12 +4,11 @@ import ProductCard from "@/components/ProductCard";
 import QuoteRequestDialog from "@/components/QuoteRequestDialog";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useCMS";
+import { Loader2 } from "lucide-react";
 
-import stretchFilm from "@/assets/products/stretch-film.jpg";
-import boxes from "@/assets/products/boxes.jpg";
-import packingTape from "@/assets/products/packing-tape.jpg";
-import bubbleWrap from "@/assets/products/bubble-wrap.jpg";
 import packagingSupplies from "@/assets/packaging-supplies.jpg";
 
 const Products = () => {
@@ -17,6 +16,19 @@ const Products = () => {
   const [quoteDialogOpen, setQuoteDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<{ title: string; category: string } | null>(null);
   const { data: settings } = useSiteSettings();
+
+  const { data: dbProducts, isLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('products')
+        .select('*')
+        .eq('is_visible', true)
+        .order('sort_order');
+      if (error) throw error;
+      return data;
+    },
+  });
 
   const getSetting = (key: string, fallback: string = '') => {
     return settings?.find(s => s.key === key)?.value || fallback;
@@ -29,99 +41,35 @@ const Products = () => {
 
   const pageTitle = getSetting('products_title', 'Our Products');
   const pageSubtitle = getSetting('products_subtitle', 'Premium packaging supplies and materials for all your warehouse and logistics needs');
-  const categoriesString = getSetting('products_categories', 'All,Film,Boxes,Tape,Protection,Janitorial');
-  const filters = categoriesString.split(',').map(c => c.trim()).filter(Boolean);
+  
+  // Get unique categories from products + "All"
+  const categories = dbProducts 
+    ? ['All', ...new Set(dbProducts.map(p => p.category))]
+    : ['All'];
 
-  const products = [
-    {
-      title: "Stretch Film - Machine Grade",
-      description: "Heavy-duty machine-grade stretch film for high-volume pallet wrapping operations.",
-      image: stretchFilm,
-      category: "Film",
-      isNew: false,
-    },
-    {
-      title: "Stretch Film - Hand Grade",
-      description: "Manual stretch wrap film with comfortable dispensers for smaller operations.",
-      image: stretchFilm,
-      category: "Film",
-      isNew: false,
-    },
-    {
-      title: "Corrugated Boxes - Small",
-      description: "Durable small-sized shipping boxes perfect for e-commerce and retail.",
-      image: boxes,
-      category: "Boxes",
-      isNew: false,
-    },
-    {
-      title: "Corrugated Boxes - Medium",
-      description: "Medium shipping boxes for general purpose packaging and storage.",
-      image: boxes,
-      category: "Boxes",
-      isNew: false,
-    },
-    {
-      title: "Corrugated Boxes - Large",
-      description: "Extra-large boxes for bulky items and heavy-duty shipping needs.",
-      image: boxes,
-      category: "Boxes",
-      isNew: false,
-    },
-    {
-      title: "Clear Packing Tape",
-      description: "Crystal clear adhesive tape with dispensers for professional packaging.",
-      image: packingTape,
-      category: "Tape",
-      isNew: false,
-    },
-    {
-      title: "Heavy Duty Packing Tape",
-      description: "Extra strong packing tape for securing heavy packages and pallets.",
-      image: packingTape,
-      category: "Tape",
-      isNew: true,
-    },
-    {
-      title: "Bubble Wrap - Small Bubble",
-      description: "Standard bubble wrap for everyday protective packaging needs.",
-      image: bubbleWrap,
-      category: "Protection",
-      isNew: false,
-    },
-    {
-      title: "Bubble Wrap - Large Bubble",
-      description: "Large bubble wrap for extra cushioning and protection of fragile items.",
-      image: bubbleWrap,
-      category: "Protection",
-      isNew: false,
-    },
-    {
-      title: "Poly Mailers",
-      description: "Waterproof poly mailers for e-commerce shipping and lightweight items.",
-      image: packagingSupplies,
-      category: "Boxes",
-      isNew: true,
-    },
-    {
-      title: "Industrial Cleaning Supplies",
-      description: "Complete line of janitorial supplies for warehouse and facility maintenance.",
-      image: packagingSupplies,
-      category: "Janitorial",
-      isNew: false,
-    },
-    {
-      title: "Custom Packaging Solutions",
-      description: "Tailored packaging designed specifically for your unique products and brand.",
-      image: packagingSupplies,
-      category: "Boxes",
-      isNew: true,
-    },
-  ];
+  const products = (dbProducts || []).map(p => ({
+    title: p.name,
+    description: p.description || '',
+    image: p.image_url || packagingSupplies,
+    category: p.category,
+    isNew: p.is_new || false,
+  }));
 
   const filteredProducts = activeFilter === "All" 
     ? products 
     : products.filter(p => p.category === activeFilter);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -141,7 +89,7 @@ const Products = () => {
       <section className="py-8 border-b border-border">
         <div className="container mx-auto px-4">
           <div className="flex flex-wrap gap-2 justify-center">
-            {filters.map((filter) => (
+            {categories.map((filter) => (
               <Button
                 key={filter}
                 variant={activeFilter === filter ? "default" : "outline"}
