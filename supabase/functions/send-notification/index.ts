@@ -4,11 +4,22 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
-// More restrictive CORS - only allow same-origin requests
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+// CORS - only allow known origins
+const allowedOrigins = [
+  Deno.env.get("SITE_URL") || "",
+  "http://localhost:5173",  // Vite dev
+  "http://localhost:8080",  // Local preview
+  "http://localhost:8081",  // Alternative local preview
+];
+
+function getCorsHeaders(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allowedOrigin = allowedOrigins.includes(origin) ? origin : allowedOrigins[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  };
+}
 
 // Input validation schemas
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -151,6 +162,8 @@ function escapeHtml(str: string): string {
 }
 
 const handler = async (req: Request): Promise<Response> => {
+  const corsHeaders = getCorsHeaders(req);
+  
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
