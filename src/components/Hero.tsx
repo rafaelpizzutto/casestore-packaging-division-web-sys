@@ -9,14 +9,23 @@ interface HeroProps {
   secondaryCta?: { text: string; link: string };
   image: string;
   imageAlt: string;
+  logo?: string;
+  logoAlt?: string;
 }
 
-const Hero = ({ title, subtitle, primaryCta, secondaryCta, image, imageAlt }: HeroProps) => {
+const Hero = ({ title, subtitle, primaryCta, secondaryCta, image, imageAlt, logo, logoAlt }: HeroProps) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background">
       <div className="container mx-auto px-4 py-20 lg:py-28">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
+            {logo && (
+              <img
+                src={logo}
+                alt={logoAlt || "Logo"}
+                className="h-20 md:h-24 w-auto"
+              />
+            )}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
               {title}
             </h1>
