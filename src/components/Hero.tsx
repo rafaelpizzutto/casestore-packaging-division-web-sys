@@ -17,15 +17,17 @@ const Hero = ({ title, subtitle, primaryCta, secondaryCta, image, imageAlt, logo
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-muted/50 to-background">
       <div className="container mx-auto px-4 py-20 lg:py-28">
+        {logo && (
+          <div className="flex justify-center mb-12 animate-in fade-in duration-500">
+            <img
+              src={logo}
+              alt={logoAlt || "Logo"}
+              className="h-28 md:h-36 lg:h-40 w-auto"
+            />
+          </div>
+        )}
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-in fade-in slide-in-from-left duration-700">
-            {logo && (
-              <img
-                src={logo}
-                alt={logoAlt || "Logo"}
-                className="h-20 md:h-24 w-auto"
-              />
-            )}
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
               {title}
             </h1>
