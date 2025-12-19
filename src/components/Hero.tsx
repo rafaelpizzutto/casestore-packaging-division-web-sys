@@ -19,7 +19,7 @@ const Hero = ({ title, subtitle, primaryCta, secondaryCta, image, imageAlt, logo
       <div className="container mx-auto px-4 py-20 lg:py-28">
         {logo && (
           <div className="flex flex-col items-center mb-12 animate-in fade-in duration-500">
-            <p className="text-xl md:text-2xl font-bold text-muted-foreground mb-4">Welcome To</p>
+            <p className="text-xl md:text-2xl font-bold text-foreground mb-4">Welcome To</p>
             <img
               src={logo}
               alt={logoAlt || "Logo"}
