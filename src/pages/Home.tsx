@@ -7,6 +7,7 @@ import TestimonialCard from "@/components/TestimonialCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Package, Truck, BarChart3, Clock, Shield, DollarSign } from "lucide-react";
+import { useSiteSettings } from "@/hooks/useCMS";
 
 import heroWarehouse from "@/assets/hero-warehouse.jpg";
 import packagingSupplies from "@/assets/packaging-supplies.jpg";
@@ -17,6 +18,9 @@ import packingTape from "@/assets/products/packing-tape.jpg";
 import bubbleWrap from "@/assets/products/bubble-wrap.jpg";
 
 const Home = () => {
+  const { data: settings } = useSiteSettings();
+  const logoUrl = settings?.find(s => s.key === 'logo_url')?.value;
+  const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
   const products = [
     {
       title: "Stretch Film",
@@ -116,6 +120,8 @@ const Home = () => {
         secondaryCta={{ text: "Explore Warehouse Tracker AI", link: "/warehouse-tracker" }}
         image={heroWarehouse}
         imageAlt="Modern warehouse with organized packaging supplies"
+        logo={logoUrl}
+        logoAlt={siteName}
       />
 
       {/* Product Highlights Section */}
