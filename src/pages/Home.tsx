@@ -239,14 +239,13 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Partner Logos Section */}
+      {/* Partner Logos Section - Hidden for now
       <section className="py-16 bg-background border-y border-border">
         <div className="container mx-auto px-4">
           <p className="text-center text-sm text-muted-foreground mb-8 uppercase tracking-wide">
             Trusted by Leading Warehouses & Distributors
           </p>
           <div className="flex flex-wrap justify-center items-center gap-12 opacity-50">
-            {/* Placeholder for partner logos */}
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="text-2xl font-bold text-muted-foreground">
                 Partner {i}
@@ -255,6 +254,7 @@ const Home = () => {
           </div>
         </div>
       </section>
+      */}
 
       <Footer />
     </div>
