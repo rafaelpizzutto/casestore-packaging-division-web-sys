@@ -10,7 +10,9 @@ const Footer = () => {
     settings?.find(s => s.key === key)?.value || fallback;
 
   const siteName = getSetting('site_name', 'CaseStore');
-  const logoUrl = getSetting('logo_url', '');
+  const footerLogoUrl = getSetting('footer_logo_url', '');
+  const headerLogoUrl = getSetting('logo_url', '');
+  const logoUrl = footerLogoUrl || headerLogoUrl;
   const description = getSetting('footer_description', 'Your trusted partner for packaging supplies, logistics solutions, and warehouse management technology.');
   const email = getSetting('contact_email', 'sales@casestore.us');
   const phone = getSetting('contact_phone', '');

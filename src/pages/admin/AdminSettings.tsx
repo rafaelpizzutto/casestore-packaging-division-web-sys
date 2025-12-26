@@ -19,7 +19,9 @@ const AdminSettings = () => {
   
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [uploading, setUploading] = useState(false);
+  const [uploadingFooterLogo, setUploadingFooterLogo] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const footerLogoInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (settings) {
@@ -40,14 +42,16 @@ const AdminSettings = () => {
     }
   };
 
-  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'header' | 'footer') => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setUploading(true);
+    const isFooter = type === 'footer';
+    isFooter ? setUploadingFooterLogo(true) : setUploading(true);
+    
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `logo-${Date.now()}.${fileExt}`;
+      const fileName = `${type}-logo-${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
         .from('site-assets')
@@ -59,13 +63,14 @@ const AdminSettings = () => {
         .from('site-assets')
         .getPublicUrl(fileName);
 
-      await updateSetting.mutateAsync({ key: 'logo_url', value: publicUrl });
-      setFormData({ ...formData, logo_url: publicUrl });
-      toast({ title: 'Uploaded', description: 'Logo uploaded successfully' });
+      const settingKey = isFooter ? 'footer_logo_url' : 'logo_url';
+      await updateSetting.mutateAsync({ key: settingKey, value: publicUrl });
+      setFormData({ ...formData, [settingKey]: publicUrl });
+      toast({ title: 'Uploaded', description: `${isFooter ? 'Footer logo' : 'Logo'} uploaded successfully` });
     } catch (error) {
       toast({ title: 'Error', description: 'Failed to upload logo', variant: 'destructive' });
     } finally {
-      setUploading(false);
+      isFooter ? setUploadingFooterLogo(false) : setUploading(false);
     }
   };
 
@@ -106,12 +111,12 @@ const AdminSettings = () => {
               </div>
             </div>
             <div className="space-y-2">
-              <Label>Logo</Label>
+              <Label>Header Logo</Label>
               <div className="flex gap-2 items-center">
                 <input
                   type="file"
                   ref={fileInputRef}
-                  onChange={handleLogoUpload}
+                  onChange={(e) => handleLogoUpload(e, 'header')}
                   accept="image/*"
                   className="hidden"
                 />
@@ -125,12 +130,43 @@ const AdminSettings = () => {
                   ) : (
                     <Upload className="h-4 w-4 mr-2" />
                   )}
-                  Upload Logo
+                  Upload Header Logo
                 </Button>
                 {formData.logo_url && (
                   <img 
                     src={formData.logo_url} 
-                    alt="Current logo" 
+                    alt="Current header logo" 
+                    className="h-10 object-contain"
+                  />
+                )}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Footer Logo</Label>
+              <div className="flex gap-2 items-center">
+                <input
+                  type="file"
+                  ref={footerLogoInputRef}
+                  onChange={(e) => handleLogoUpload(e, 'footer')}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <Button
+                  onClick={() => footerLogoInputRef.current?.click()}
+                  variant="outline"
+                  disabled={uploadingFooterLogo}
+                >
+                  {uploadingFooterLogo ? (
+                    <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                  ) : (
+                    <Upload className="h-4 w-4 mr-2" />
+                  )}
+                  Upload Footer Logo
+                </Button>
+                {formData.footer_logo_url && (
+                  <img 
+                    src={formData.footer_logo_url} 
+                    alt="Current footer logo" 
                     className="h-10 object-contain"
                   />
                 )}
