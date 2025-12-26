@@ -13,7 +13,7 @@ interface ProductCardProps {
 
 const ProductCard = ({ title, description, image, category, isNew, onQuoteClick }: ProductCardProps) => {
   return (
-    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 animate-in fade-in">
+    <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300 animate-in fade-in h-full flex flex-col">
       <div className="relative overflow-hidden aspect-square">
         <img
           src={image}
@@ -37,7 +37,7 @@ const ProductCard = ({ title, description, image, category, isNew, onQuoteClick 
         </div>
         <CardDescription className="line-clamp-2">{description}</CardDescription>
       </CardHeader>
-      <CardFooter>
+      <CardFooter className="mt-auto">
         <Button 
           variant="outline" 
           className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
