@@ -131,7 +131,7 @@ const Products = () => {
           <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
             We offer custom packaging designed specifically for your products and business needs.
           </p>
-          <Button size="lg">Contact Our Team</Button>
+          <Button size="lg" onClick={() => setQuoteDialogOpen(true)}>Contact Our Team</Button>
         </div>
       </section>
 
