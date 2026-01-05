@@ -142,6 +142,24 @@ const AdminSettings = () => {
               </div>
             </div>
             <div className="space-y-2">
+              <Label htmlFor="header_logo_height">Header Logo Height (px)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="header_logo_height"
+                  type="number"
+                  min="20"
+                  max="120"
+                  value={formData.header_logo_height || '40'}
+                  onChange={(e) => setFormData({ ...formData, header_logo_height: e.target.value })}
+                  placeholder="40"
+                />
+                <Button onClick={() => handleSave('header_logo_height')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Recommended: 32-60px</p>
+            </div>
+            <div className="space-y-2">
               <Label>Footer Logo</Label>
               <div className="flex gap-2 items-center">
                 <input
@@ -171,6 +189,24 @@ const AdminSettings = () => {
                   />
                 )}
               </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="footer_logo_height">Footer Logo Height (px)</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="footer_logo_height"
+                  type="number"
+                  min="20"
+                  max="120"
+                  value={formData.footer_logo_height || '40'}
+                  onChange={(e) => setFormData({ ...formData, footer_logo_height: e.target.value })}
+                  placeholder="40"
+                />
+                <Button onClick={() => handleSave('footer_logo_height')} size="icon">
+                  <Save className="h-4 w-4" />
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Recommended: 32-60px</p>
             </div>
           </CardContent>
         </Card>
