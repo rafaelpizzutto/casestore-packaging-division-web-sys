@@ -157,7 +157,7 @@ const AdminSettings = () => {
                   <Save className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Recommended: 32-60px</p>
+              <p className="text-xs text-muted-foreground">Recommended: 32-120px</p>
             </div>
             <div className="space-y-2">
               <Label>Footer Logo</Label>
@@ -206,7 +206,7 @@ const AdminSettings = () => {
                   <Save className="h-4 w-4" />
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">Recommended: 32-60px</p>
+              <p className="text-xs text-muted-foreground">Recommended: 32-120px</p>
             </div>
           </CardContent>
         </Card>
