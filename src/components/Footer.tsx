@@ -19,6 +19,7 @@ const Footer = () => {
   const location = getSetting('contact_location', 'United States');
   const copyright = getSetting('footer_copyright', 'CaseStore LLC. All rights reserved.');
   const productsString = getSetting('footer_products', 'Stretch Film,Corrugated Boxes,Packing Tape,Bubble Wrap,Janitorial Supplies');
+  const footerLogoHeight = getSetting('footer_logo_height', '40');
   
   const products = productsString.split(',').map(p => p.trim()).filter(Boolean);
 
@@ -28,7 +29,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             {logoUrl ? (
-              <img src={logoUrl} alt={siteName} className="h-10 w-auto mb-4" />
+              <img src={logoUrl} alt={siteName} className="w-auto mb-4" style={{ height: `${footerLogoHeight}px` }} />
             ) : (
               <h3 className="text-xl font-bold mb-4">
                 {siteName}<span className="text-primary">.</span>

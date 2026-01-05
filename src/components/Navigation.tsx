@@ -13,6 +13,7 @@ const Navigation = () => {
 
   const siteName = settings?.find(s => s.key === 'site_name')?.value || 'CaseStore';
   const logoUrl = settings?.find(s => s.key === 'logo_url')?.value;
+  const headerLogoHeight = settings?.find(s => s.key === 'header_logo_height')?.value || '40';
 
   const navLinks = menuItems?.map(item => ({
     name: item.name,
@@ -32,7 +33,7 @@ const Navigation = () => {
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
               {logoUrl ? (
-                <img src={logoUrl} alt={siteName} className="h-10 w-auto" />
+                <img src={logoUrl} alt={siteName} className="w-auto" style={{ height: `${headerLogoHeight}px` }} />
               ) : (
                 <div className="text-2xl font-bold text-foreground">
                   {siteName}<span className="text-primary">.</span>
