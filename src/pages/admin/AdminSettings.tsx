@@ -54,13 +54,13 @@ const AdminSettings = () => {
       const fileName = `${type}-logo-${Date.now()}.${fileExt}`;
       
       const { error: uploadError } = await supabase.storage
-        .from('site-assets')
+        .from('pkgweb-site-assets')
         .upload(fileName, file, { upsert: true });
 
       if (uploadError) throw uploadError;
 
       const { data: { publicUrl } } = supabase.storage
-        .from('site-assets')
+        .from('pkgweb-site-assets')
         .getPublicUrl(fileName);
 
       const settingKey = isFooter ? 'footer_logo_url' : 'logo_url';

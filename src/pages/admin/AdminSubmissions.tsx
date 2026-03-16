@@ -56,7 +56,7 @@ const AdminSubmissions = () => {
     queryKey: ['contact-submissions'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('contact_submissions')
+        .from('pkgweb_contact_submissions')
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -68,7 +68,7 @@ const AdminSubmissions = () => {
     queryKey: ['quote-requests'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('quote_requests')
+        .from('pkgweb_quote_requests')
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -80,7 +80,7 @@ const AdminSubmissions = () => {
     queryKey: ['waitlist-signups'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('waitlist_signups')
+        .from('pkgweb_waitlist_signups')
         .select('*')
         .order('created_at', { ascending: false });
       if (error) throw error;
@@ -91,7 +91,7 @@ const AdminSubmissions = () => {
   const updateContactStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
-        .from('contact_submissions')
+        .from('pkgweb_contact_submissions')
         .update({ status })
         .eq('id', id);
       if (error) throw error;
@@ -105,7 +105,7 @@ const AdminSubmissions = () => {
   const updateQuoteStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
-        .from('quote_requests')
+        .from('pkgweb_quote_requests')
         .update({ status })
         .eq('id', id);
       if (error) throw error;
@@ -119,7 +119,7 @@ const AdminSubmissions = () => {
   const deleteContact = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('contact_submissions')
+        .from('pkgweb_contact_submissions')
         .delete()
         .eq('id', id);
       if (error) throw error;
@@ -133,7 +133,7 @@ const AdminSubmissions = () => {
   const deleteQuote = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('quote_requests')
+        .from('pkgweb_quote_requests')
         .delete()
         .eq('id', id);
       if (error) throw error;
@@ -147,7 +147,7 @@ const AdminSubmissions = () => {
   const updateWaitlistStatus = useMutation({
     mutationFn: async ({ id, status }: { id: string; status: string }) => {
       const { error } = await supabase
-        .from('waitlist_signups')
+        .from('pkgweb_waitlist_signups')
         .update({ status })
         .eq('id', id);
       if (error) throw error;
@@ -161,7 +161,7 @@ const AdminSubmissions = () => {
   const deleteWaitlist = useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('waitlist_signups')
+        .from('pkgweb_waitlist_signups')
         .delete()
         .eq('id', id);
       if (error) throw error;

@@ -57,7 +57,7 @@ const AdminProducts = () => {
     queryKey: ['admin-products'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('products')
+        .from('pkgweb_products')
         .select('*')
         .order('sort_order');
       if (error) throw error;
@@ -67,7 +67,7 @@ const AdminProducts = () => {
 
   const createMutation = useMutation({
     mutationFn: async (data: ProductFormData) => {
-      const { error } = await supabase.from('products').insert({
+      const { error } = await supabase.from('pkgweb_products').insert({
         name: data.name,
         description: data.description || null,
         category: data.category,
@@ -92,7 +92,7 @@ const AdminProducts = () => {
   const updateMutation = useMutation({
     mutationFn: async ({ id, data }: { id: string; data: ProductFormData }) => {
       const { error } = await supabase
-        .from('products')
+        .from('pkgweb_products')
         .update({
           name: data.name,
           description: data.description || null,
@@ -118,7 +118,7 @@ const AdminProducts = () => {
 
   const deleteMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from('products').delete().eq('id', id);
+      const { error } = await supabase.from('pkgweb_products').delete().eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {

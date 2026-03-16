@@ -43,7 +43,7 @@ const allowedTypes = ["contact", "quote", "waitlist"];
 // Allowed admin emails (validated against site_settings)
 async function validateAdminEmail(supabase: any, email: string): Promise<boolean> {
   const { data } = await supabase
-    .from('site_settings')
+    .from('pkgweb_site_settings')
     .select('value')
     .in('key', ['contact_email', 'admin_email'])
     .limit(10);

@@ -18,10 +18,10 @@ const Products = () => {
   const { data: settings } = useSiteSettings();
 
   const { data: dbProducts, isLoading } = useQuery({
-    queryKey: ['products'],
+    queryKey: ['pkgweb_products'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('products')
+        .from('pkgweb_products')
         .select('*')
         .eq('is_visible', true)
         .order('sort_order');

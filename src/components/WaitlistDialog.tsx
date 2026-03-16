@@ -35,7 +35,7 @@ const WaitlistDialog = ({ open, onOpenChange }: WaitlistDialogProps) => {
     try {
       // Save to database
       const { error: dbError } = await supabase
-        .from('waitlist_signups')
+        .from('pkgweb_waitlist_signups')
         .insert([formData]);
 
       if (dbError) throw dbError;

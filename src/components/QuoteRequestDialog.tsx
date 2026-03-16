@@ -220,7 +220,7 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
 
       // Save to database
       const { error: dbError } = await supabase
-        .from('quote_requests')
+        .from('pkgweb_quote_requests')
         .insert({
           name: formData.contactName,
           email: formData.email,

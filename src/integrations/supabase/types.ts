@@ -14,7 +14,7 @@ export type Database = {
   }
   public: {
     Tables: {
-      contact_submissions: {
+      pkgweb_contact_submissions: {
         Row: {
           company: string | null
           created_at: string
@@ -47,7 +47,7 @@ export type Database = {
         }
         Relationships: []
       }
-      menu_items: {
+      pkgweb_menu_items: {
         Row: {
           created_at: string
           id: string
@@ -77,7 +77,7 @@ export type Database = {
         }
         Relationships: []
       }
-      page_content: {
+      pkgweb_page_content: {
         Row: {
           content: string | null
           content_type: string
@@ -110,7 +110,7 @@ export type Database = {
         }
         Relationships: []
       }
-      products: {
+      pkgweb_products: {
         Row: {
           category: string
           created_at: string
@@ -152,7 +152,7 @@ export type Database = {
         }
         Relationships: []
       }
-      quote_requests: {
+      pkgweb_quote_requests: {
         Row: {
           company: string | null
           created_at: string
@@ -194,7 +194,7 @@ export type Database = {
         }
         Relationships: []
       }
-      site_settings: {
+      pkgweb_site_settings: {
         Row: {
           created_at: string
           id: string
@@ -221,25 +221,25 @@ export type Database = {
         }
         Relationships: []
       }
-      user_roles: {
+      pkgweb_user_roles: {
         Row: {
           id: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: Database["public"]["Enums"]["pkgweb_app_role"]
           user_id: string
         }
         Insert: {
           id?: string
-          role: Database["public"]["Enums"]["app_role"]
+          role: Database["public"]["Enums"]["pkgweb_app_role"]
           user_id: string
         }
         Update: {
           id?: string
-          role?: Database["public"]["Enums"]["app_role"]
+          role?: Database["public"]["Enums"]["pkgweb_app_role"]
           user_id?: string
         }
         Relationships: []
       }
-      waitlist_signups: {
+      pkgweb_waitlist_signups: {
         Row: {
           business_type: string | null
           company: string | null
@@ -283,16 +283,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
+      pkgweb_has_role: {
         Args: {
-          _role: Database["public"]["Enums"]["app_role"]
+          _role: Database["public"]["Enums"]["pkgweb_app_role"]
           _user_id: string
         }
         Returns: boolean
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      pkgweb_app_role: "admin" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -420,7 +420,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      pkgweb_app_role: ["admin", "user"],
     },
   },
 } as const

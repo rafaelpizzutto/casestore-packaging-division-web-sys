@@ -32,7 +32,7 @@ export const useSiteSettings = () => {
     queryKey: ['site-settings'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('site_settings')
+        .from('pkgweb_site_settings')
         .select('*');
       if (error) throw error;
       return data as SiteSetting[];
@@ -45,7 +45,7 @@ export const useMenuItems = () => {
     queryKey: ['menu-items'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('menu_items')
+        .from('pkgweb_menu_items')
         .select('*')
         .eq('is_visible', true)
         .order('sort_order');
@@ -60,7 +60,7 @@ export const useAllMenuItems = () => {
     queryKey: ['all-menu-items'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('menu_items')
+        .from('pkgweb_menu_items')
         .select('*')
         .order('sort_order');
       if (error) throw error;
@@ -74,7 +74,7 @@ export const usePageContent = (page: string) => {
     queryKey: ['page-content', page],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('page_content')
+        .from('pkgweb_page_content')
         .select('*')
         .eq('page', page)
         .order('sort_order');
@@ -91,7 +91,7 @@ export const useUpdateSiteSetting = () => {
   return useMutation({
     mutationFn: async ({ key, value }: { key: string; value: string }) => {
       const { error } = await supabase
-        .from('site_settings')
+        .from('pkgweb_site_settings')
         .update({ value })
         .eq('key', key);
       if (error) throw error;
@@ -109,7 +109,7 @@ export const useUpdateMenuItem = () => {
     mutationFn: async (item: Partial<MenuItem> & { id: string }) => {
       const { id, ...updates } = item;
       const { error } = await supabase
-        .from('menu_items')
+        .from('pkgweb_menu_items')
         .update(updates)
         .eq('id', id);
       if (error) throw error;
@@ -127,7 +127,7 @@ export const useCreateMenuItem = () => {
   return useMutation({
     mutationFn: async (item: Omit<MenuItem, 'id'>) => {
       const { error } = await supabase
-        .from('menu_items')
+        .from('pkgweb_menu_items')
         .insert(item);
       if (error) throw error;
     },
@@ -144,7 +144,7 @@ export const useDeleteMenuItem = () => {
   return useMutation({
     mutationFn: async (id: string) => {
       const { error } = await supabase
-        .from('menu_items')
+        .from('pkgweb_menu_items')
         .delete()
         .eq('id', id);
       if (error) throw error;

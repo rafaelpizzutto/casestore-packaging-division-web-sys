@@ -33,7 +33,7 @@ const Contact = () => {
     try {
       // Save to database
       const { error: dbError } = await supabase
-        .from('contact_submissions')
+        .from('pkgweb_contact_submissions')
         .insert({
           name: formData.name,
           email: formData.email,
