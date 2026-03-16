@@ -21,9 +21,10 @@ jobs:
             ssh-keyscan -t ed25519 github.com >> ~/.ssh/known_hosts 2>/dev/null
             APP_DIR=~/apps/casestoreus-websys
             if [ ! -d "$APP_DIR" ]; then
-              git clone -b "$BRANCH" git@github.com:rafaelpizzutto/casestore-packaging-division-web-sys.git "$APP_DIR"
+              git clone -b "$BRANCH" https://github.com/rafaelpizzutto/casestore-packaging-division-web-sys.git "$APP_DIR"
             fi
             cd "$APP_DIR"
+            git remote set-url origin https://github.com/rafaelpizzutto/casestore-packaging-division-web-sys.git 2>/dev/null || true
             if [ ! -f .env ]; then
               echo "ERROR: .env file missing — create it before deploying" >&2
               exit 1
