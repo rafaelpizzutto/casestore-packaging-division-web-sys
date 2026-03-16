@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Mail, MapPin, Phone } from "lucide-react";
 import { useSiteSettings, useMenuItems } from "@/hooks/useCMS";
+import casestoreLogo from "@/assets/casestore-logo.png";
 
 const Footer = () => {
   const { data: settings } = useSiteSettings();
@@ -28,13 +29,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            {logoUrl ? (
-              <img src={logoUrl} alt={siteName} className="w-auto mb-4" style={{ height: `${footerLogoHeight}px` }} />
-            ) : (
-              <h3 className="text-xl font-bold mb-4">
-                {siteName}<span className="text-primary">.</span>
-              </h3>
-            )}
+            <img src={logoUrl || casestoreLogo} alt={siteName} className="w-auto mb-4 brightness-0 invert" style={{ height: `${footerLogoHeight}px` }} />
             <p className="text-sm text-secondary-foreground/80">
               {description}
             </p>
