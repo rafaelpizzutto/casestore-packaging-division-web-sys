@@ -31,6 +31,8 @@ interface QuoteRequest {
   message: string | null;
   status: string | null;
   created_at: string;
+  warehouse_quote_id: string | null;
+  warehouse_quote_number: string | null;
 }
 
 interface WaitlistSignup {
@@ -334,6 +336,13 @@ const AdminSubmissions = () => {
                   </div>
                 </CardHeader>
                 <CardContent>
+                  {quote.warehouse_quote_number && (
+                    <p className="text-sm mb-2">
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        Warehouse: {quote.warehouse_quote_number}
+                      </Badge>
+                    </p>
+                  )}
                   <p className="text-sm text-muted-foreground mb-2">
                     <strong>Products:</strong> {quote.product_interest || 'Not specified'}
                   </p>

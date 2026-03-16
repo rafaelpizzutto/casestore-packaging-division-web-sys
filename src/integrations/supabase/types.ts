@@ -165,6 +165,8 @@ export type Database = {
           product_interest: string | null
           status: string | null
           updated_at: string
+          warehouse_quote_id: string | null
+          warehouse_quote_number: string | null
         }
         Insert: {
           company?: string | null
@@ -178,6 +180,8 @@ export type Database = {
           product_interest?: string | null
           status?: string | null
           updated_at?: string
+          warehouse_quote_id?: string | null
+          warehouse_quote_number?: string | null
         }
         Update: {
           company?: string | null
@@ -191,6 +195,8 @@ export type Database = {
           product_interest?: string | null
           status?: string | null
           updated_at?: string
+          warehouse_quote_id?: string | null
+          warehouse_quote_number?: string | null
         }
         Relationships: []
       }

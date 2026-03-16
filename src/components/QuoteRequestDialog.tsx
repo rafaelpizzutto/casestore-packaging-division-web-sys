@@ -219,7 +219,7 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
       ].join('');
 
       // Save to database
-      const { error: dbError } = await supabase
+      const { data: insertedQuote, error: dbError } = await supabase
         .from('pkgweb_quote_requests')
         .insert({
           name: formData.contactName,
@@ -229,9 +229,52 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
           product_interest: productInterest,
           estimated_quantity: estimatedQuantity,
           message: message,
-        });
+        })
+        .select('id')
+        .single();
 
       if (dbError) throw dbError;
+
+      // Sync quote to Warehouse Tracker system
+      try {
+        const { data: syncResult } = await supabase.functions.invoke('sync-website-quote', {
+          body: {
+            companyId: '29ec2140-7d21-4237-b994-5787abb5b97f',
+            customer: {
+              name: formData.contactName,
+              email: formData.email,
+              phone: formData.phone || undefined,
+              company: formData.companyName || undefined,
+            },
+            items: formData.products.map(p => ({
+              productName: p.productName,
+              description: [
+                p.productSpecs ? `Specs: ${p.productSpecs}` : '',
+                `Qty unit: ${p.quantityUnit}`,
+                formData.expectedPrice ? `Expected price: ${formData.expectedPrice}` : '',
+              ].filter(Boolean).join('\n'),
+              quantity: parseInt(p.quantityNow) || 1,
+              recurring: p.quantityPerMonth
+                ? `${p.quantityPerMonth} per ${p.quantityTimeUnit}`
+                : undefined,
+            })),
+            notes: formData.additionalNotes || 'Quote via packaging.casestore.us',
+            sourceId: insertedQuote.id,
+          },
+        });
+
+        if (syncResult?.quoteId) {
+          await supabase
+            .from('pkgweb_quote_requests')
+            .update({
+              warehouse_quote_id: syncResult.quoteId,
+              warehouse_quote_number: syncResult.quoteNumber,
+            })
+            .eq('id', insertedQuote.id);
+        }
+      } catch (syncError) {
+        console.error('Warehouse sync failed (quote still saved):', syncError);
+      }
 
       // Send email notification
       const adminEmail = getSetting('contact_email', 'info@casestore.us');
@@ -253,7 +296,7 @@ const QuoteRequestDialog = ({ open, onOpenChange, productTitle = "", productCate
           adminEmail,
         },
       });
-      
+
       toast({
         title: "Quote Request Submitted!",
         description: `We'll review your request for ${formData.products.length} product(s) and send a quote to your email within 24 hours.`,
