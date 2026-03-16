@@ -29,9 +29,11 @@ jobs:
               echo "ERROR: .env file missing — create it before deploying" >&2
               exit 1
             fi
+            cp .env /tmp/.env.backup
             git fetch origin "$BRANCH"
             git checkout "$BRANCH"
             git reset --hard "origin/$BRANCH"
+            cp /tmp/.env.backup .env
             docker compose -f docker-compose.prod.yml down
             docker builder prune -af
             docker compose -f docker-compose.prod.yml build --no-cache
