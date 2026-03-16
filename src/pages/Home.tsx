@@ -9,6 +9,7 @@ import { Link } from "react-router-dom";
 import { Package, Truck, BarChart3, Clock, Shield, DollarSign } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useCMS";
 
+import casestoreLogo from "@/assets/casestore-logo.png";
 import heroWarehouse from "@/assets/hero-warehouse.jpg";
 import packagingSupplies from "@/assets/packaging-supplies.jpg";
 import warehouseTrackerAi from "@/assets/warehouse-tracker-ai.jpg";
@@ -120,7 +121,7 @@ const Home = () => {
         secondaryCta={{ text: "Explore Warehouse Tracker AI", link: "/warehouse-tracker" }}
         image={heroWarehouse}
         imageAlt="Modern warehouse with organized packaging supplies"
-        logo={logoUrl}
+        logo={logoUrl || casestoreLogo}
         logoAlt={siteName}
       />
 

@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useState } from "react";
 import { useMenuItems, useSiteSettings } from "@/hooks/useCMS";
 import QuoteRequestDialog from "./QuoteRequestDialog";
+import casestoreLogo from "@/assets/casestore-logo.png";
 
 const Navigation = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -32,13 +33,7 @@ const Navigation = () => {
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             <Link to="/" className="flex items-center space-x-2">
-              {logoUrl ? (
-                <img src={logoUrl} alt={siteName} className="w-auto" style={{ height: `${headerLogoHeight}px` }} />
-              ) : (
-                <div className="text-2xl font-bold text-foreground">
-                  {siteName}<span className="text-primary">.</span>
-                </div>
-              )}
+              <img src={logoUrl || casestoreLogo} alt={siteName} className="w-auto" style={{ height: `${headerLogoHeight}px` }} />
             </Link>
 
             {/* Desktop Navigation */}
