@@ -9,6 +9,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Package, ClipboardCheck, BarChart3, Users, Bell, Brain, FileText, TrendingUp } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useCMS";
 
+import SEO from "@/components/SEO";
 import warehouseTrackerAi from "@/assets/warehouse-tracker-ai.jpg";
 
 const WarehouseTracker = () => {
@@ -67,6 +68,7 @@ const WarehouseTracker = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Warehouse Tracker AI" description="AI-powered warehouse management system. Track orders, manage inventory, and get intelligent insights. Smart automation for modern warehouses." />
       <Navigation />
       
       <Hero

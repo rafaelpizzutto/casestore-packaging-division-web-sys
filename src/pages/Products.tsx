@@ -9,6 +9,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSiteSettings } from "@/hooks/useCMS";
 import { Loader2 } from "lucide-react";
 
+import SEO from "@/components/SEO";
 import packagingSupplies from "@/assets/packaging-supplies.jpg";
 
 const Products = () => {
@@ -73,6 +74,7 @@ const Products = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Products" description="Browse CaseStore's premium packaging supplies: stretch film, corrugated boxes, packing tape, bubble wrap, and more. Competitive pricing, fast shipping." />
       <Navigation />
       
       {/* Hero Section */}

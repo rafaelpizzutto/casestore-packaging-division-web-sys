@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Package, Truck, BarChart3, Clock, Shield, DollarSign } from "lucide-react";
 import { useSiteSettings } from "@/hooks/useCMS";
+import SEO from "@/components/SEO";
 
 import casestoreLogo from "@/assets/casestore-logo.png";
 import heroWarehouse from "@/assets/hero-warehouse.jpg";
@@ -112,6 +113,16 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        description="CaseStore delivers premium packaging supplies, logistics support, and AI-powered Warehouse Tracker for efficient warehouse management. Fast shipping, competitive pricing."
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Organization",
+          name: "CaseStore Packaging Division",
+          url: "https://packaging.casestore.us",
+          description: "Premium packaging supplies and AI-powered warehouse management solutions",
+        }}
+      />
       <Navigation />
       
       <Hero

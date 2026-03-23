@@ -10,6 +10,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useSiteSettings } from "@/hooks/useCMS";
 import { supabase } from "@/integrations/supabase/client";
+import SEO from "@/components/SEO";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -89,6 +90,7 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Contact Us" description="Get in touch with CaseStore Packaging Division. Request quotes, ask questions, or learn more about our packaging supplies and warehouse solutions." />
       <Navigation />
       
       {/* Hero Section */}

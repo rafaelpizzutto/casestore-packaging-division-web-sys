@@ -3,6 +3,7 @@ import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Award, Users, Globe, TrendingUp } from "lucide-react";
 
+import SEO from "@/components/SEO";
 import heroWarehouse from "@/assets/hero-warehouse.jpg";
 
 const About = () => {
@@ -31,6 +32,7 @@ const About = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="About Us" description="Learn about CaseStore Packaging Division. Premium packaging supplies and AI-powered warehouse management solutions for modern logistics." />
       <Navigation />
       
       {/* Hero Section */}

@@ -18,6 +18,9 @@ import AdminImages from "./pages/admin/AdminImages";
 import AdminContent from "./pages/admin/AdminContent";
 import AdminSubmissions from "./pages/admin/AdminSubmissions";
 import AdminProducts from "./pages/admin/AdminProducts";
+import Blog from "./pages/Blog";
+import BlogPost from "./pages/BlogPost";
+import FAQ from "./pages/FAQ";
 
 const queryClient = new QueryClient();
 
@@ -46,6 +49,10 @@ const App = () => (
               <Route path="products" element={<AdminProducts />} />
             </Route>
             
+            <Route path="/blog" element={<Blog />} />
+            <Route path="/blog/:slug" element={<BlogPost />} />
+            <Route path="/faq" element={<FAQ />} />
+
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
